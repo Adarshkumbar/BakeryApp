@@ -1,20 +1,28 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
 const Card = () => {
+    const [data, setData] = useState([]);
+
     useEffect(() => {
-        axios.get('http://localhost:8080/api/')
-            .then(response => {
+        const fetchData = async () => {
+            try {
+                const response = await axios.get('http://localhost:8080/api/cookies');
+                setData(response.data);
                 console.log(response.data);
-            })
-            .catch(error => {
-                console.log("Error fetching data : ", error)
-            });
+            } catch (error) {
+                console.log("Error fetching data:", error);
+            }
+        };
+
+        fetchData();
     }, []);
 
     return (
-        <div>Card</div>
+        <div>
+            data
+        </div>
     );
-}
+};
 
 export default Card;

@@ -3,11 +3,12 @@ const mongoose = require('mongoose');
 require('dotenv').config();
 const app = express();
 const port = process.env.PORT;
-
+const cors = require('cors');
 const ingredient = require('./routes/ingredients');
 const cookie = require('./routes/cookies');
 
 // middlewares
+app.use(cors({ origin: 'http://localhost:5173' }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); // middleware for form data
 
