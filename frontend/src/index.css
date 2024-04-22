@@ -1,0 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body{
+    background-image: url("https://www.jkcement.com/wp-content/uploads/2023/08/black-white-background-1-jpg-1024x574.webphttps://www.hdwallpapers.in/download/cloud_sky_white_background_hd_white_background-HD.jpg");
+    overflow: hidden;
+}
