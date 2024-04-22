@@ -7,20 +7,28 @@ const Automatic = () => {
   const [inventory, setInventory] = useState([]);
   const [maxCost, setMaxCost] = useState(0);
   const [maxCookies, setMaxCookies] = useState({});
-
+  const [buySuccess, setBuySuccess] = useState(false);
   useEffect(() => {
     const getData = async () => {
       try {
         const data = await fetchData();
-        setInventory(data[0])
+        setInventory(data[0]);
         setCookies(data[1]?.data); 
       } catch (error) {
         console.error('Error fetching cookies:', error);
       }
     };
-    getData();
-  }, []);
-
+  
+    if (buySuccess) {
+      // If buySuccess is true, fetch data again
+      getData();
+      // Reset buySuccess to false after fetching data
+      setBuySuccess(false);
+    } else {
+      // Fetch data on initial component mount
+      getData();
+    }
+  }, [buySuccess]);
   useEffect(() => {
     if (cookies?.length > 0 && inventory?.length > 0) {
       const { maxCost, maxCookies } = calculateMaxCostAndCookies(cookies, inventory);
@@ -83,6 +91,7 @@ const Automatic = () => {
       } catch (error) {
         console.error('Error updating ingredients:', error);
       }
+      
     }
     else{
       alert('Payment Unsuccessful')

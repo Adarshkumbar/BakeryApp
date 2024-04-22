@@ -6,80 +6,76 @@ const getAutomatic = async (req, res) => {
 };
 
 const putAutomatic = async (req, res) => {
-    const data = req.body;
-    const cookieData = await cookie.find();
+    const maxCookies = req.body.maxCookies;
+    console.log("max cookies ", maxCookies);
+    let totalSugar = 0;
+    let totalOil = 0;
+    let totalChocolate = 0;
+    let totalNuts = 0;
+    let totalFlour = 0;
+    try {
+        const cookieData = await cookie.find();
     
-    // Object to store total quantities of each ingredient
-    const totalIngredients = {
-      totalSugar: 0,
-      totalOil: 0,
-      totalFlour: 0,
-      totalChocolate: 0,
-      totalNuts: 0
-    };
-
-    // Iterate over each shape in the request body
-    Object.keys(data).forEach(shape => {
-        // Find the corresponding cookie shape from the database
-        const shapeData = cookieData.find(cookie => cookie.name === shape);
-        console.log("shpe ",shapeData);
-        // If the shape exists in the database
-        if (shapeData) {
-            // Iterate over the ingredients of the shape
-            shapeData.details.forEach(detail => {
-                // Multiply the quantity of each ingredient by the quantity of the shape
-                const ingredientQuantity = detail.quantity * data[shape];
-                
-                // Update the total quantity of each ingredient
-                switch (detail.ingredient) {
-                    case 'sugar':
-                        totalIngredients.totalSugar += ingredientQuantity;
-                        break;
-                    case 'oil':
-                        totalIngredients.totalOil += ingredientQuantity;
-                        break;
-                    case 'flour':
-                        totalIngredients.totalFlour += ingredientQuantity;
-                        break;
-                    case 'chocolate':
-                        totalIngredients.totalChocolate += ingredientQuantity;
-                        break;
-                    case 'nuts':
-                        totalIngredients.totalNuts += ingredientQuantity;
-                        break;
-                    default:
-                        break;
-                }
-            });
-        }
-    });
-
-    // Log the total quantities of each ingredient
-    console.log(totalIngredients);
+       
     
-    // Log the total quantities of each ingredient
+        Object.keys(maxCookies).forEach(shape => {
+            console.log("Shape:", shape);
+            const cookie = cookieData.find(cookie => cookie.name === shape);
+            if (cookie) {
+                cookie.details.forEach(detail => {
+                    switch (detail.ingredient) {
+                        case 'sugar':
+                            totalSugar += detail.quantity * maxCookies[shape];
+                            break;
+                        case 'oil':
+                            totalOil += detail.quantity * maxCookies[shape];
+                            break;
+                        case 'chocolate':
+                            totalChocolate += detail.quantity * maxCookies[shape];
+                            break;
+                        case 'nuts':
+                            totalNuts += detail.quantity * maxCookies[shape];
+                            break;
+                        case 'flour':
+                            totalFlour += detail.quantity * maxCookies[shape];
+                            break;
+                        default:
+                            // Handle if the ingredient is not found in the cookie details
+                            break;
+                    }
+                });
+            }
+        });
     
-  //  try{
-  //     await ingredient.findByIdAndUpdate("661f7e721aa1c988f4addd14", {
-  //         $inc: { quantity: -data.flour },
-  //       });
-  //       await ingredient.findByIdAndUpdate("661f97d61aa1c988f4addd42", {
-  //         $inc: { quantity: -data.chocolate },
-  //       });
-  //       await ingredient.findByIdAndUpdate("661f7e631aa1c988f4addd12", {
-  //         $inc: { quantity: -data.oil },
-  //       });
-  //       await ingredient.findByIdAndUpdate("661f67a5d5f67ed67c9e4fc6", {
-  //         $inc: { quantity: -data.nuts },
-  //       });
-  //       await ingredient.findByIdAndUpdate("661f7e3a1aa1c988f4addd10", {
-  //         $inc: { quantity: -data.sugar },
-  //       });
-
-  //       res.status(200).json({ success: true });
-  // } catch (error) {
-  res.status(202).json({ success: false, error: error.message });
-  // }
+        console.log("😁 Totals:", totalSugar, totalOil, totalChocolate, totalNuts, totalFlour);
+        // You can send the totals to the client or perform any other operation here
+    } catch (error) {
+        console.error("Error fetching cookie data:", error);
+        // Handle the error appropriately, such as sending an error response to the client
+    }
+    try {
+        // Update the quantities of ingredients in the database
+        await ingredient.findByIdAndUpdate("661f7e721aa1c988f4addd14", {
+            $inc: { quantity: -totalFlour },
+        });
+        await ingredient.findByIdAndUpdate("661f97d61aa1c988f4addd42", {
+            $inc: { quantity: -totalChocolate },
+        });
+        await ingredient.findByIdAndUpdate("661f7e631aa1c988f4addd12", {
+            $inc: { quantity: -totalOil },
+        });
+        await ingredient.findByIdAndUpdate("661f67a5d5f67ed67c9e4fc6", {
+            $inc: { quantity: -totalNuts },
+        });
+        await ingredient.findByIdAndUpdate("661f7e3a1aa1c988f4addd10", {
+            $inc: { quantity: -totalSugar},
+        });
+    
+        res.status(200).json({ success: true });
+    } catch (error) {
+        console.error("Error updating ingredient quantities:", error);
+        res.status(202).json({ success: false, error: error.message });
+    }
 };
 
 module.exports = { getAutomatic, putAutomatic };
