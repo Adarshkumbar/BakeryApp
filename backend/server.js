@@ -7,7 +7,7 @@ const cors = require('cors');
 const ingredient = require('./routes/ingredients');
 const cookie = require('./routes/cookies');
 const autoCalc = require('./routes/autoCalc')
-
+const auth = require('./routes/auth')
 // middlewares
 app.use(cors({ origin: 'http://localhost:5173' }));
 app.use(express.json());
@@ -17,6 +17,7 @@ app.use(express.urlencoded({ extended: true })); // middleware for form data
 app.use('/api/ingredients', ingredient);
 app.use('/api/cookies', cookie);
 app.use('/api/autoCalc', autoCalc);
+app.use('/api/auth',auth)
 // app.use('/api/admin/shapes', shapes);
 
 // Connect to MongoDB

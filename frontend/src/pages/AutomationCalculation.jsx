@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-
+import fetchData from '../data';
 const Automatic = () => {
   const [cookies, setCookies] = useState([]);
   const [inventory, setInventory] = useState([]);
@@ -9,34 +9,24 @@ const Automatic = () => {
   const [maxCookies, setMaxCookies] = useState({});
 
   useEffect(() => {
-    const fetchData = async () => {
+    const getData = async () => {
       try {
-        const cookiesResponse = await axios.get('http://localhost:8080/api/cookies');
-        setCookies(cookiesResponse.data.data);
-        console.log(cookiesResponse.data.data);
+        const data = await fetchData();
+        setInventory(data[0])
+        setCookies(data[1]?.data); 
       } catch (error) {
         console.error('Error fetching cookies:', error);
       }
     };
-
-    const fetchInventory = async () => {
-      try {
-        const inventoryResponse = await axios.get('http://localhost:8080/api/ingredients');
-        setInventory(inventoryResponse.data);
-      } catch (error) {
-        console.error('Error fetching inventory:', error);
-      }
-    };
-
-    fetchData();
-    fetchInventory();
+    getData();
   }, []);
 
   useEffect(() => {
-    if (cookies.length > 0 && inventory.length > 0) {
+    if (cookies?.length > 0 && inventory?.length > 0) {
       const { maxCost, maxCookies } = calculateMaxCostAndCookies(cookies, inventory);
       setMaxCost(maxCost);
       setMaxCookies(maxCookies);
+      console.log("🤷‍♂️",inventory , cookies);
     }
   }, [cookies, inventory]);
 
